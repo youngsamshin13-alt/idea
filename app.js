@@ -44,6 +44,7 @@ const form = document.querySelector("#todo-form");
 const input = document.querySelector("#todo-input");
 const feedback = document.querySelector("#form-feedback");
 const chips = Array.from(document.querySelectorAll(".priority-chip"));
+const logoutForm = document.querySelector(".logout-form");
 const taskList = document.querySelector("#task-list");
 const emptyState = document.querySelector("#empty-state");
 const taskSummary = document.querySelector("#task-summary");
@@ -52,7 +53,7 @@ const nextDeliveryLabel = document.querySelector("#next-delivery-label");
 const SHUFFLE_CHARSET = "가나다라마바사아자차카타파하ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 const sessionUserName = document.querySelector("#session-user-name");
 
-sessionUserName.textContent = SESSION.nickname || "카카오 사용자";
+sessionUserName.textContent = resolveSessionDisplayName(SESSION);
 
 initializeShuffleText();
 initializeTodoInputTextType();
@@ -110,6 +111,10 @@ input.addEventListener("input", () => {
     feedback.textContent = "";
   }
 });
+
+if (logoutForm) {
+  logoutForm.addEventListener("submit", handleLogoutSubmit);
+}
 
 render();
 
@@ -297,6 +302,45 @@ function blinkTodoPlaceholderCursor(text, blinkCount = 0) {
 
   input.placeholder = blinkCount % 2 === 0 ? text : `${text}|`;
   window.setTimeout(() => blinkTodoPlaceholderCursor(text, blinkCount + 1), 350);
+}
+
+function getSessionDisplayName(session) {
+  const displayName =
+    typeof session?.displayName === "string"
+      ? session.displayName.trim()
+      : typeof session?.nickname === "string"
+        ? session.nickname.trim()
+        : "";
+
+  return displayName || "카카오 사용자";
+}
+
+async function handleLogoutSubmit(event) {
+  event.preventDefault();
+
+  try {
+    const response = await fetch(logoutForm.action, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "text/html",
+      },
+    });
+
+    if (response.redirected && response.url) {
+      window.location.assign(response.url);
+      return;
+    }
+
+    if (response.ok) {
+      window.location.assign("/login.html?status=logged_out");
+      return;
+    }
+  } catch (error) {
+    console.error("Failed to log out", error);
+  }
+
+  HTMLFormElement.prototype.submit.call(logoutForm);
 }
 
 function render() {
@@ -750,4 +794,26 @@ function createTaskId() {
   }
 
   return `task-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function resolveSessionDisplayName(session) {
+  const explicitDisplayName =
+    typeof session?.displayName === "string"
+      ? session.displayName.trim()
+      : typeof session?.nickname === "string"
+        ? session.nickname.trim()
+        : "";
+
+  if (explicitDisplayName && explicitDisplayName !== "\uce74\uce74\uc624 \uc0ac\uc6a9\uc790") {
+    return explicitDisplayName;
+  }
+
+  const normalizedUserId =
+    typeof session?.userId === "string" ? session.userId.trim() : String(session?.userId || "").trim();
+
+  if (!normalizedUserId) {
+    return "\uce74\uce74\uc624 \uc0ac\uc6a9\uc790";
+  }
+
+  return `\uce74\uce74\uc624 \uacc4\uc815 #${normalizedUserId.slice(-6)}`;
 }

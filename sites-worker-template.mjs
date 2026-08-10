@@ -4,6 +4,7 @@ const SESSION_COOKIE = "morning_session";
 const OAUTH_STATE_COOKIE = "morning_oauth_state";
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
+const KAKAO_NICKNAME_SCOPE = "profile_nickname";
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
@@ -114,6 +115,7 @@ async function startKakaoLogin(request, env) {
   authorizeUrl.searchParams.set("response_type", "code");
   authorizeUrl.searchParams.set("client_id", env.KAKAO_REST_API_KEY);
   authorizeUrl.searchParams.set("redirect_uri", `${origin}/auth/kakao/callback`);
+  authorizeUrl.searchParams.set("scope", KAKAO_NICKNAME_SCOPE);
   authorizeUrl.searchParams.set("state", state);
 
   return redirect(request, authorizeUrl.toString(), [stateCookie]);
@@ -159,13 +161,15 @@ async function finishKakaoLogin(request, env, requestUrl) {
       env,
     );
     const user = await retrieveKakaoUser(token.access_token);
+    const identity = buildKakaoIdentity(user);
     const sessionCookie = await createSignedCookie(
       SESSION_COOKIE,
       {
         accessToken: token.access_token,
+        displayName: identity.displayName,
         expiresAt: Date.now() + SESSION_TTL_MS,
-        nickname: getKakaoNickname(user),
-        userId: String(user.id),
+        nickname: identity.nickname,
+        userId: identity.userId,
       },
       env,
       {
@@ -210,11 +214,17 @@ async function exchangeAuthorizationCode(code, redirectUri, env) {
 }
 
 async function retrieveKakaoUser(accessToken) {
+  const body = new URLSearchParams({
+    property_keys: JSON.stringify(["kakao_account.profile", "kakao_account.email", "kakao_account.name"]),
+  });
+
   const response = await fetch("https://kapi.kakao.com/v2/user/me", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
     },
+    body,
   });
 
   const payload = await readJsonResponse(response);
@@ -226,7 +236,7 @@ async function retrieveKakaoUser(accessToken) {
 }
 
 async function logout(request, env) {
-  if (!isSameOriginRequest(request)) {
+  if (isCrossOriginRequest(request)) {
     return createTextResponse(request, 403, "로그아웃 요청을 확인할 수 없어요.");
   }
 
@@ -263,6 +273,7 @@ async function sendSessionScript(request, env) {
   }
 
   const publicSession = JSON.stringify({
+    displayName: formatSessionDisplayName(session),
     nickname: session.nickname,
     userId: session.userId,
   }).replace(/</g, "\\u003c");
@@ -429,14 +440,76 @@ function getKakaoNickname(user) {
   return typeof nickname === "string" && nickname.trim() ? nickname.trim().slice(0, 40) : "카카오 사용자";
 }
 
+function buildKakaoIdentity(user) {
+  const userId = typeof user.id === "undefined" ? "" : String(user.id);
+  const nickname = pickFirstNonEmpty([
+    user.kakao_account?.profile?.nickname,
+    user.properties?.nickname,
+  ]);
+  const name = pickFirstNonEmpty([user.kakao_account?.name]);
+  const email = pickFirstNonEmpty([user.kakao_account?.email]);
+
+  return {
+    displayName: truncateDisplayName(nickname || name || email || formatVisitorAccountLabel(userId)),
+    nickname: nickname || "",
+    userId,
+  };
+}
+
+function formatSessionDisplayName(session) {
+  const explicitDisplayName = pickFirstNonEmpty([session?.displayName, session?.nickname]);
+  if (explicitDisplayName && explicitDisplayName !== "\uce74\uce74\uc624 \uc0ac\uc6a9\uc790") {
+    return explicitDisplayName;
+  }
+
+  return formatVisitorAccountLabel(session?.userId);
+}
+
+function formatVisitorAccountLabel(userId) {
+  const normalizedUserId = typeof userId === "string" ? userId.trim() : String(userId || "").trim();
+  if (!normalizedUserId) {
+    return "\uce74\uce74\uc624 \uc0ac\uc6a9\uc790";
+  }
+
+  return `\uce74\uce74\uc624 \uacc4\uc815 #${normalizedUserId.slice(-6)}`;
+}
+
+function formatKakaoUserLabel(userId) {
+  const normalizedUserId = typeof userId === "string" ? userId.trim() : String(userId || "").trim();
+  if (!normalizedUserId) {
+    return "카카오 사용자";
+  }
+
+  return `카카오 계정 #${normalizedUserId.slice(-6)}`;
+}
+
+function pickFirstNonEmpty(values) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function truncateDisplayName(value) {
+  return value.length > 40 ? value.slice(0, 40) : value;
+}
+
 function isSecureRequest(request) {
   return new URL(request.url).protocol === "https:";
 }
 
-function isSameOriginRequest(request) {
+function isCrossOriginRequest(request) {
   const origin = request.headers.get("origin");
   if (origin) {
-    return origin === getRequestOrigin(request);
+    return origin !== getRequestOrigin(request);
+  }
+
+  const fetchSite = request.headers.get("sec-fetch-site");
+  if (fetchSite) {
+    return !["same-origin", "same-site", "none"].includes(fetchSite);
   }
 
   const referer = request.headers.get("referer");
@@ -445,9 +518,9 @@ function isSameOriginRequest(request) {
   }
 
   try {
-    return new URL(referer).origin === getRequestOrigin(request);
+    return new URL(referer).origin !== getRequestOrigin(request);
   } catch (error) {
-    return false;
+    return true;
   }
 }
 
