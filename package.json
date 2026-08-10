@@ -5,7 +5,8 @@
   "description": "카카오 로그인으로 사용자별 할 일을 정리하는 아침 우선순위 MVP",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check app.js && node --check login.js"
+    "build": "node build-sites.js",
+    "check": "node --check server.js && node --check app.js && node --check login.js && node --check build-sites.js && node --check sites-worker-template.mjs"
   },
   "engines": {
     "node": ">=18"

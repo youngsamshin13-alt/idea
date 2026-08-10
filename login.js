@@ -2,12 +2,13 @@ const feedback = document.querySelector("#login-feedback");
 const query = new URLSearchParams(window.location.search);
 
 const errorMessages = {
-  cancelled: "카카오 로그인이 취소되었어요. 원할 때 다시 시도해 주세요.",
-  invalid_state: "로그인 요청을 확인할 수 없어 중단했어요. 다시 시도해 주세요.",
-  kakao_failed: "카카오 로그인 연결에 실패했어요. 잠시 후 다시 시도해 주세요.",
-  missing_code: "카카오 인증 정보를 받지 못했어요. 다시 시도해 주세요.",
-  session_required: "할 일을 보려면 먼저 카카오로 로그인해 주세요.",
-  too_many_requests: "로그인 요청이 너무 많아요. 잠시 후 다시 시도해 주세요.",
+  cancelled: "移댁뭅??濡쒓렇?몄씠 痍⑥냼?섏뿀?댁슂. ?먰븷 ???ㅼ떆 ?쒕룄??二쇱꽭??",
+  configuration: "濡쒓렇???ㅼ젙???꾨즺?섏? ?딆븘?? ?섎━??怨듭쑀?쒕뱶由닿린 ?꾩뿉 移댁뭅??蹂???좏똿?댁씠 ?꾩슂?댁슂.",
+  invalid_state: "濡쒓렇???붿껌???뺤씤?????놁뼱 以묐떒?덉뼱?? ?ㅼ떆 ?쒕룄??二쇱꽭??",
+  kakao_failed: "移댁뭅??濡쒓렇???곌껐???ㅽ뙣?덉뼱?? ?좎떆 ???ㅼ떆 ?쒕룄??二쇱꽭??",
+  missing_code: "移댁뭅???몄쬆 ?뺣낫瑜?諛쏆? 紐삵뻽?댁슂. ?ㅼ떆 ?쒕룄??二쇱꽭??",
+  session_required: "???쇱쓣 蹂대젮硫?癒쇱? 移댁뭅?ㅻ줈 濡쒓렇?명빐 二쇱꽭??",
+  too_many_requests: "濡쒓렇???붿껌???덈Т 留롮븘?? ?좎떆 ???ㅼ떆 ?쒕룄??二쇱꽭??",
 };
 
 const errorCode = query.get("error");
@@ -16,7 +17,7 @@ if (errorCode && errorMessages[errorCode]) {
 }
 
 if (query.get("status") === "logged_out") {
-  feedback.textContent = "안전하게 로그아웃했어요.";
+  feedback.textContent = "?덉쟾?섍쾶 濡쒓렇?꾩썐?덉뼱??";
 }
 
 if (window.location.search) {

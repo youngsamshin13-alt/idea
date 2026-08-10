@@ -1,21 +1,22 @@
 # memory.md
 
-## 기록 규칙
-- 핵심 작업이 끝날 때마다 이 파일을 바로 업데이트한다.
-- 기록 대상은 새 기능 추가, 핵심 수정, 기능 제거다.
-- 각 기록은 `YYYY-MM-DD HH:MM:SS KST` 형식으로 남긴다.
-- 작업 내용에는 무엇을 했는지와 어떤 파일이 바뀌었는지를 함께 적는다.
+## 湲곕줉 洹쒖튃
+- ?듭떖 ?묒뾽???앸궇 ?뚮쭏?????뚯씪??諛붾줈 ?낅뜲?댄듃?쒕떎.
+- 湲곕줉 ??곸? ??湲곕뒫 異붽?, ?듭떖 ?섏젙, 湲곕뒫 ?쒓굅??
+- 媛?湲곕줉? `YYYY-MM-DD HH:MM:SS KST` ?뺤떇?쇰줈 ?④릿??
+- ?묒뾽 ?댁슜?먮뒗 臾댁뾿???덈뒗吏? ?대뼡 ?뚯씪??諛붾뚯뿀?붿?瑜??④퍡 ?곷뒗??
 
-## 작업 기록
-- 2026-08-10 12:14:27 KST | 카카오 REST OAuth 실제 로그인, 서버 세션, 로그아웃, 사용자별 할 일 저장 분리와 로그인 화면 추가 | `PRD.md`, `design.md`, `AGENTS.md`, `index.html`, `login.html`, `styles.css`, `app.js`, `login.js`, `server.js`, `package.json`, `setup-kakao.ps1`, `.env.example`, `.gitignore`, `README.md`, `.codex/agents/*.toml`, `memory.md`
-- 2026-08-10 11:31:26 KST | 프로젝트 전용 AI 개발팀 구성: HTML, CSS, JavaScript, QA 전문 서브에이전트와 메인 위임 규칙 추가 | `AGENTS.md`, `.codex/config.toml`, `.codex/agents/*.toml`, `memory.md`
-- 2026-08-10 10:55:42 KST | 오늘 정리된 할 일 카드 내용에도 TextType 입력 효과 적용 | `app.js`, `styles.css`, `memory.md`
-- 2026-08-10 10:46:21 KST | 할 일 내용 입력 상자의 안내 문구에 React Bits 스타일의 TextType 입력 효과 적용 | `app.js`, `styles.css`, `memory.md`
-- 2026-08-10 10:40:57 KST | 큰 제목들에 React Bits 스타일의 셔플 텍스트 효과 적용, 기존 그라디언트 제목 효과 제거 | `index.html`, `styles.css`, `app.js`, `memory.md`
-- 2026-08-10 10:35:32 KST | React Bits 스타일의 그라디언트 텍스트 효과를 메인 헤드라인에 적용 | `index.html`, `styles.css`, `app.js`, `memory.md`
-- 2026-08-10 10:27:01 KST | 현재 원본 폴더 상태를 `C:\VIBECODING\backup_2026_08_10`으로 백업 복제 | `memory.md`
-- 2026-08-03 14:51:00 KST | 브라우저에서 바로 여는 한 화면 MVP 첫 구현 추가 | `index.html`, `styles.css`, `app.js`, `README.md`
-- 2026-08-03 15:52:56 KST | 작업 규칙 문서 초안 저장 | `agents.md`
-- 2026-08-03 16:04:41 KST | `하루 미루기` 기능 추가 및 미룬 할 일 표시 반영 | `app.js`, `styles.css`
-- 2026-08-03 16:35:16 KST | `완료` 기능 추가 및 완료 상태 문구 정리 | `app.js`, `styles.css`
-- 2026-08-03 16:37:29 KST | 핵심 작업 종료 후 `memory.md`를 계속 갱신하는 기록 규칙 도입 | `memory.md`
+## ?묒뾽 湲곕줉
+- 2026-08-10 14:34:54 KST | Sites private 諛곗룷瑜?吏?썝?섎룄濡?Sites ?깅퉬?덉쭅, 鍮뚮뱶 ?ㅽ겕由쏀듃, Worker ?몄듃由ш낵 ?섍꼍 蹂??蹂댁“ 臾멸뎄 異붽? | `.gitignore`, `.env.example`, `package.json`, `login.js`, `build-sites.js`, `sites-worker-template.mjs`, `.openai/hosting.json`, `memory.md`
+- 2026-08-10 12:14:27 KST | 移댁뭅??REST OAuth ?ㅼ젣 濡쒓렇?? ?쒕쾭 ?몄뀡, 濡쒓렇?꾩썐, ?ъ슜?먮퀎 ???????遺꾨━? 濡쒓렇???붾㈃ 異붽? | `PRD.md`, `design.md`, `AGENTS.md`, `index.html`, `login.html`, `styles.css`, `app.js`, `login.js`, `server.js`, `package.json`, `setup-kakao.ps1`, `.env.example`, `.gitignore`, `README.md`, `.codex/agents/*.toml`, `memory.md`
+- 2026-08-10 11:31:26 KST | ?꾨줈?앺듃 ?꾩슜 AI 媛쒕컻? 援ъ꽦: HTML, CSS, JavaScript, QA ?꾨Ц ?쒕툕?먯씠?꾪듃? 硫붿씤 ?꾩엫 洹쒖튃 異붽? | `AGENTS.md`, `.codex/config.toml`, `.codex/agents/*.toml`, `memory.md`
+- 2026-08-10 10:55:42 KST | ?ㅻ뒛 ?뺣━??????移대뱶 ?댁슜?먮룄 TextType ?낅젰 ?④낵 ?곸슜 | `app.js`, `styles.css`, `memory.md`
+- 2026-08-10 10:46:21 KST | ?????댁슜 ?낅젰 ?곸옄???덈궡 臾멸뎄??React Bits ?ㅽ??쇱쓽 TextType ?낅젰 ?④낵 ?곸슜 | `app.js`, `styles.css`, `memory.md`
+- 2026-08-10 10:40:57 KST | ???쒕ぉ?ㅼ뿉 React Bits ?ㅽ??쇱쓽 ?뷀뵆 ?띿뒪???④낵 ?곸슜, 湲곗〈 洹몃씪?붿뼵???쒕ぉ ?④낵 ?쒓굅 | `index.html`, `styles.css`, `app.js`, `memory.md`
+- 2026-08-10 10:35:32 KST | React Bits ?ㅽ??쇱쓽 洹몃씪?붿뼵???띿뒪???④낵瑜?硫붿씤 ?ㅻ뱶?쇱씤???곸슜 | `index.html`, `styles.css`, `app.js`, `memory.md`
+- 2026-08-10 10:27:01 KST | ?꾩옱 ?먮낯 ?대뜑 ?곹깭瑜?`C:\VIBECODING\backup_2026_08_10`?쇰줈 諛깆뾽 蹂듭젣 | `memory.md`
+- 2026-08-03 14:51:00 KST | 釉뚮씪?곗??먯꽌 諛붾줈 ?щ뒗 ???붾㈃ MVP 泥?援ы쁽 異붽? | `index.html`, `styles.css`, `app.js`, `README.md`
+- 2026-08-03 15:52:56 KST | ?묒뾽 洹쒖튃 臾몄꽌 珥덉븞 ???| `agents.md`
+- 2026-08-03 16:04:41 KST | `?섎（ 誘몃（湲? 湲곕뒫 異붽? 諛?誘몃， ?????쒖떆 諛섏쁺 | `app.js`, `styles.css`
+- 2026-08-03 16:35:16 KST | `?꾨즺` 湲곕뒫 異붽? 諛??꾨즺 ?곹깭 臾멸뎄 ?뺣━ | `app.js`, `styles.css`
+- 2026-08-03 16:37:29 KST | ?듭떖 ?묒뾽 醫낅즺 ??`memory.md`瑜?怨꾩냽 媛깆떊?섎뒗 湲곕줉 洹쒖튃 ?꾩엯 | `memory.md`
