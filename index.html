@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아침 카카오 우선순위 알림</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero card">
+      <div class="session-bar" aria-label="로그인 사용자 정보">
+        <p class="session-user">
+          <span class="session-label">로그인 사용자</span>
+          <strong id="session-user-name">카카오 사용자</strong>
+        </p>
+        <form class="logout-form" action="/auth/logout" method="post">
+          <button type="submit" class="logout-button">로그아웃</button>
+        </form>
+      </div>
+      <p class="eyebrow">Morning Kakao Brief</p>
+      <h1
+        class="shuffle-title shuffle-title-hero"
+        data-shuffle-text
+        data-shuffle-direction="right"
+        data-shuffle-hover="true"
+      >내일 아침, 급한 일부터 다시 알려드릴게요</h1>
+      <p class="hero-copy">
+        퇴근길에 떠오른 할 일을 짧게 남기면, 중요도 순서대로 정리해서
+        다음 날 아침 카카오톡 브리핑처럼 다시 보기 쉽게 준비해둡니다.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="composer card" aria-labelledby="composer-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">입력</p>
+            <h2
+              id="composer-title"
+              class="shuffle-title"
+              data-shuffle-text
+              data-shuffle-direction="right"
+              data-shuffle-hover="true"
+            >내일 꼭 해야 할 일</h2>
+          </div>
+          <p class="autosave-badge">브라우저에 자동 저장돼요</p>
+        </div>
+
+        <form id="todo-form" class="todo-form">
+          <label class="field-label" for="todo-input">할 일 내용</label>
+          <textarea
+            id="todo-input"
+            name="todo"
+            rows="4"
+            maxlength="120"
+            placeholder="내일 꼭 해야 할 일을 적어보세요"
+          ></textarea>
+          <p class="field-hint">퇴근길에 생각난 일을 짧게 적어도 괜찮아요.</p>
+
+          <div class="priority-block">
+            <p class="field-label">중요도 선택</p>
+            <div class="priority-group" role="radiogroup" aria-label="중요도 선택">
+              <button type="button" class="priority-chip" data-priority="high" aria-pressed="false">높음</button>
+              <button type="button" class="priority-chip is-selected" data-priority="medium" aria-pressed="true">보통</button>
+              <button type="button" class="priority-chip" data-priority="low" aria-pressed="false">낮음</button>
+            </div>
+          </div>
+
+          <div class="alarm-panel">
+            <div class="alarm-copy">
+              <p class="alarm-title">카카오톡 아침 브리핑</p>
+              <p class="alarm-description">다음 날 출근 전에 카카오톡으로 알려드려요.</p>
+            </div>
+            <div class="alarm-icon" aria-hidden="true">톡</div>
+          </div>
+
+          <button type="submit" class="save-button">내일 할 일 저장</button>
+          <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <aside class="insights-column">
+        <section class="preview card" aria-labelledby="preview-title">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">미리보기</p>
+              <h2
+                id="preview-title"
+                class="shuffle-title"
+                data-shuffle-text
+                data-shuffle-direction="right"
+                data-shuffle-hover="true"
+              >내일 아침 카카오톡 요약</h2>
+            </div>
+          </div>
+
+          <div class="preview-meta">
+            <p id="next-delivery-label" class="preview-time"></p>
+            <p class="preview-note">카카오 발송 방식은 아직 미정이라, 현재는 브리핑 문구를 먼저 준비해둡니다.</p>
+          </div>
+
+          <div class="kakao-preview">
+            <div class="kakao-bubble">
+              <p class="bubble-title">내일 아침 급한 일부터 챙겨보세요</p>
+              <ol id="briefing-list" class="briefing-list"></ol>
+            </div>
+          </div>
+        </section>
+
+        <section class="task-board card" aria-labelledby="task-board-title">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">정리된 목록</p>
+              <h2
+                id="task-board-title"
+                class="shuffle-title"
+                data-shuffle-text
+                data-shuffle-direction="right"
+                data-shuffle-hover="true"
+              >오늘 정리된 할 일</h2>
+            </div>
+            <p id="task-summary" class="task-summary"></p>
+          </div>
+
+          <p id="empty-state" class="empty-state">
+            아직 저장된 할 일이 없어요. 한 줄만 적어두면 내일 아침에 다시 보기 쉬워져요.
+          </p>
+          <ul id="task-list" class="task-list" aria-live="polite"></ul>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/session.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

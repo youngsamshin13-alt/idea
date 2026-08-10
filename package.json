@@ -1,0 +1,13 @@
+{
+  "name": "morning-kakao-priority",
+  "version": "1.0.0",
+  "private": true,
+  "description": "카카오 로그인으로 사용자별 할 일을 정리하는 아침 우선순위 MVP",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check app.js && node --check login.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
