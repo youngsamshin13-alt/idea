@@ -1,5 +1,6 @@
 # memory.md
 
+- 2026-08-10 16:17:15 KST | 서버 저장소로 할 일을 옮기고 카카오 나에게 보내기 발송, D1 세션/토큰 저장, 내부 예약 발송 진입점을 추가함 | `server.js`, `sites-worker-template.mjs`, `app.js`, `index.html`, `login.js`, `.env.example`, `.gitignore`, `.openai/hosting.json`, `memory.md`
 - 2026-08-10 15:36:12 KST | 카카오 로그인 닉네임 동의 범위와 워커 세션 표시값을 맞추고, 로그아웃 same-origin 검증을 브라우저 fetch 헤더 기준으로 보강함 | `app.js`, `server.js`, `sites-worker-template.mjs`, `memory.md`
 
 ## 湲곕줉 洹쒖튃

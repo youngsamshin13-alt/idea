@@ -1,4 +1,5 @@
 const LEGACY_STORAGE_KEY = "morning-kakao-priority-tasks-v1";
+const LEGACY_OWNER_KEY = `${LEGACY_STORAGE_KEY}:legacy-owner`;
 const SESSION = window.__KAKAO_SESSION__;
 
 if (!SESSION?.userId) {
@@ -7,37 +8,35 @@ if (!SESSION?.userId) {
 }
 
 const SESSION_USER_ID = String(SESSION.userId);
-const STORAGE_KEY = `${LEGACY_STORAGE_KEY}:user:${SESSION_USER_ID}`;
-const LEGACY_OWNER_KEY = `${LEGACY_STORAGE_KEY}:legacy-owner`;
 const DEFAULT_PRIORITY = "medium";
 const DELIVERY_HOUR = 8;
 const DELIVERY_MINUTE = 30;
 const TEXT_TYPE_SPEED = 75;
+const SHUFFLE_CHARSET = "가나다라마바사아자차카타파하ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 
 const PRIORITY_CONFIG = {
   high: {
     label: "높음",
-    weight: 3,
     pillClass: "high",
-  },
-  medium: {
-    label: "보통",
-    weight: 2,
-    pillClass: "medium",
+    weight: 3,
   },
   low: {
     label: "낮음",
-    weight: 1,
     pillClass: "low",
+    weight: 1,
+  },
+  medium: {
+    label: "보통",
+    pillClass: "medium",
+    weight: 2,
   },
 };
 
-migrateLegacyTasks();
-
 const state = {
   selectedPriority: DEFAULT_PRIORITY,
-  tasks: loadTasks(),
+  tasks: [],
 };
+
 const animatedTaskIds = new Set();
 
 const form = document.querySelector("#todo-form");
@@ -50,13 +49,18 @@ const emptyState = document.querySelector("#empty-state");
 const taskSummary = document.querySelector("#task-summary");
 const briefingList = document.querySelector("#briefing-list");
 const nextDeliveryLabel = document.querySelector("#next-delivery-label");
-const SHUFFLE_CHARSET = "가나다라마바사아자차카타파하ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 const sessionUserName = document.querySelector("#session-user-name");
+const saveButton = form.querySelector(".save-button");
+
+let isTaskMutationPending = false;
 
 sessionUserName.textContent = resolveSessionDisplayName(SESSION);
 
 initializeShuffleText();
 initializeTodoInputTextType();
+setSelectedPriority(DEFAULT_PRIORITY);
+render();
+void initializeApplication();
 
 chips.forEach((chip) => {
   chip.addEventListener("click", () => {
@@ -67,43 +71,19 @@ chips.forEach((chip) => {
 taskList.addEventListener("click", (event) => {
   const completeButton = event.target.closest(".complete-button");
   if (completeButton) {
-    completeTask(completeButton.dataset.taskId);
+    void completeTask(completeButton.dataset.taskId);
     return;
   }
 
-  const button = event.target.closest(".snooze-button");
-  if (!button) {
-    return;
+  const snoozeButton = event.target.closest(".snooze-button");
+  if (snoozeButton) {
+    void snoozeTask(snoozeButton.dataset.taskId);
   }
-
-  snoozeTask(button.dataset.taskId);
 });
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-
-  const rawText = input.value.trim();
-  if (!rawText) {
-    feedback.textContent = "할 일을 한 줄만 적어주세요.";
-    input.focus();
-    return;
-  }
-
-  const task = {
-    id: createTaskId(),
-    text: normalizeWhitespace(rawText),
-    priority: state.selectedPriority,
-    createdAt: new Date().toISOString(),
-  };
-
-  state.tasks.push(task);
-  saveTasks(state.tasks);
-  render();
-
-  form.reset();
-  setSelectedPriority(DEFAULT_PRIORITY);
-  feedback.textContent = "내일 아침 브리핑에 추가했어요.";
-  input.focus();
+  void createTask();
 });
 
 input.addEventListener("input", () => {
@@ -116,7 +96,202 @@ if (logoutForm) {
   logoutForm.addEventListener("submit", handleLogoutSubmit);
 }
 
-render();
+async function initializeApplication() {
+  try {
+    state.tasks = await fetchTasksFromServer();
+    render();
+
+    const migrated = await maybeMigrateLegacyTasks();
+    if (migrated) {
+      state.tasks = await fetchTasksFromServer();
+      render();
+    }
+  } catch (error) {
+    console.error("Failed to initialize tasks", error);
+    feedback.textContent = "할 일 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.";
+  }
+}
+
+async function createTask() {
+  if (isTaskMutationPending) {
+    return;
+  }
+
+  const rawText = input.value.trim();
+  if (!rawText) {
+    feedback.textContent = "할 일 내용을 한 줄만 적어 주세요.";
+    input.focus();
+    return;
+  }
+
+  try {
+    setTaskMutationPending(true);
+    const { task } = await requestJson("/api/tasks", {
+      body: JSON.stringify({
+        priority: state.selectedPriority,
+        text: rawText,
+      }),
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      method: "POST",
+    });
+
+    state.tasks.push(task);
+    render();
+
+    form.reset();
+    setSelectedPriority(DEFAULT_PRIORITY);
+    feedback.textContent = "내일 아침 브리핑에 추가했어요.";
+    input.focus();
+  } catch (error) {
+    console.error("Failed to save task", error);
+    feedback.textContent = error.message || "할 일을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.";
+  } finally {
+    setTaskMutationPending(false);
+  }
+}
+
+async function completeTask(taskId) {
+  if (!taskId || isTaskMutationPending) {
+    return;
+  }
+
+  try {
+    setTaskMutationPending(true);
+    const { task } = await requestJson(`/api/tasks/${encodeURIComponent(taskId)}/complete`, {
+      method: "POST",
+    });
+
+    replaceTask(task);
+    render();
+  } catch (error) {
+    console.error("Failed to complete task", error);
+    feedback.textContent = error.message || "할 일을 완료 처리하지 못했어요.";
+  } finally {
+    setTaskMutationPending(false);
+  }
+}
+
+async function snoozeTask(taskId) {
+  if (!taskId || isTaskMutationPending) {
+    return;
+  }
+
+  try {
+    setTaskMutationPending(true);
+    const { task } = await requestJson(`/api/tasks/${encodeURIComponent(taskId)}/snooze`, {
+      method: "POST",
+    });
+
+    replaceTask(task);
+    render();
+  } catch (error) {
+    console.error("Failed to snooze task", error);
+    feedback.textContent = error.message || "할 일을 하루 미루지 못했어요.";
+  } finally {
+    setTaskMutationPending(false);
+  }
+}
+
+function replaceTask(nextTask) {
+  state.tasks = state.tasks.map((task) => (task.id === nextTask.id ? nextTask : task));
+}
+
+function setTaskMutationPending(isPending) {
+  isTaskMutationPending = isPending;
+  saveButton.disabled = isPending;
+  input.disabled = isPending;
+
+  chips.forEach((chip) => {
+    chip.disabled = isPending;
+  });
+}
+
+async function fetchTasksFromServer() {
+  const payload = await requestJson("/api/tasks");
+  return Array.isArray(payload.tasks) ? payload.tasks.filter(isValidTaskShape) : [];
+}
+
+async function maybeMigrateLegacyTasks() {
+  try {
+    if (state.tasks.length > 0) {
+      return false;
+    }
+
+    const legacyOwner = localStorage.getItem(LEGACY_OWNER_KEY);
+    if (legacyOwner && legacyOwner !== SESSION_USER_ID) {
+      return false;
+    }
+
+    const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!raw) {
+      return false;
+    }
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return false;
+    }
+
+    const legacyTasks = parsed.filter(isValidTaskShape);
+    if (legacyTasks.length === 0) {
+      return false;
+    }
+
+    for (const task of legacyTasks) {
+      await requestJson("/api/tasks", {
+        body: JSON.stringify({
+          priority: task.priority,
+          text: task.text,
+        }),
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        method: "POST",
+      });
+    }
+
+    localStorage.setItem(LEGACY_OWNER_KEY, SESSION_USER_ID);
+    return true;
+  } catch (error) {
+    console.error("Failed to migrate legacy tasks", error);
+    return false;
+  }
+}
+
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      ...(options.headers || {}),
+    },
+    method: options.method || "GET",
+    body: options.body,
+  });
+
+  const text = await response.text();
+  const payload = text ? safeJsonParse(text) : null;
+
+  if (!response.ok) {
+    const message =
+      typeof payload?.error === "string" && payload.error.trim()
+        ? payload.error.trim()
+        : text || "요청을 처리하지 못했어요.";
+    throw new Error(message);
+  }
+
+  return payload || {};
+}
+
+function safeJsonParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return null;
+  }
+}
 
 function initializeShuffleText() {
   const shuffleElements = document.querySelectorAll("[data-shuffle-text]");
@@ -304,27 +479,16 @@ function blinkTodoPlaceholderCursor(text, blinkCount = 0) {
   window.setTimeout(() => blinkTodoPlaceholderCursor(text, blinkCount + 1), 350);
 }
 
-function getSessionDisplayName(session) {
-  const displayName =
-    typeof session?.displayName === "string"
-      ? session.displayName.trim()
-      : typeof session?.nickname === "string"
-        ? session.nickname.trim()
-        : "";
-
-  return displayName || "카카오 사용자";
-}
-
 async function handleLogoutSubmit(event) {
   event.preventDefault();
 
   try {
     const response = await fetch(logoutForm.action, {
-      method: "POST",
       credentials: "same-origin",
       headers: {
         Accept: "text/html",
       },
+      method: "POST",
     });
 
     if (response.redirected && response.url) {
@@ -369,6 +533,7 @@ function renderTaskList(tasks, nextDelivery) {
     const isCompleted = isTaskCompleted(task);
     const item = document.createElement("li");
     item.className = "task-item";
+
     if (isCompleted) {
       item.classList.add("is-completed");
     }
@@ -512,7 +677,7 @@ function renderBriefing(tasks) {
 
   if (tasks.length === 0) {
     const placeholder = document.createElement("li");
-    placeholder.textContent = "다음 아침 브리핑에 들어갈 할 일이 없어요.";
+    placeholder.textContent = "다음 아침 브리핑에 들어갈 할 일이 아직 없어요.";
     briefingList.append(placeholder);
     return;
   }
@@ -553,7 +718,7 @@ function renderSummary(tasks, nextDelivery) {
 }
 
 function renderNextDelivery(nextDelivery) {
-  nextDeliveryLabel.textContent = `${formatKoreanDate(nextDelivery)} 오전 ${formatTime(nextDelivery)} 브리핑 기준`;
+  nextDeliveryLabel.textContent = `${formatKoreanDate(nextDelivery)} 오전 ${formatTime(nextDelivery)} 발송 예정`;
 }
 
 function setSelectedPriority(priority) {
@@ -566,57 +731,6 @@ function setSelectedPriority(priority) {
   });
 }
 
-function loadTasks() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return [];
-    }
-
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    return parsed.filter(isValidTaskShape);
-  } catch (error) {
-    console.error("Failed to load tasks", error);
-    return [];
-  }
-}
-
-function migrateLegacyTasks() {
-  try {
-    if (localStorage.getItem(STORAGE_KEY) !== null) {
-      return;
-    }
-
-    const legacyOwner = localStorage.getItem(LEGACY_OWNER_KEY);
-    if (legacyOwner && legacyOwner !== SESSION_USER_ID) {
-      return;
-    }
-
-    const legacyTasks = localStorage.getItem(LEGACY_STORAGE_KEY);
-    if (!legacyTasks) {
-      return;
-    }
-
-    const parsedTasks = JSON.parse(legacyTasks);
-    if (!Array.isArray(parsedTasks)) {
-      return;
-    }
-
-    localStorage.setItem(STORAGE_KEY, legacyTasks);
-    localStorage.setItem(LEGACY_OWNER_KEY, SESSION_USER_ID);
-  } catch (error) {
-    console.error("Failed to migrate legacy tasks", error);
-  }
-}
-
-function saveTasks(tasks) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-}
-
 function isValidTaskShape(task) {
   return (
     task &&
@@ -624,9 +738,9 @@ function isValidTaskShape(task) {
     typeof task.text === "string" &&
     typeof task.createdAt === "string" &&
     typeof task.priority === "string" &&
-    (typeof task.snoozedUntil === "undefined" || typeof task.snoozedUntil === "string") &&
-    (typeof task.completedAt === "undefined" || typeof task.completedAt === "string") &&
-    PRIORITY_CONFIG[task.priority]
+    PRIORITY_CONFIG[task.priority] &&
+    (typeof task.snoozedUntil === "string" || task.snoozedUntil === null || typeof task.snoozedUntil === "undefined") &&
+    (typeof task.completedAt === "string" || task.completedAt === null || typeof task.completedAt === "undefined")
   );
 }
 
@@ -697,39 +811,6 @@ function isTaskCompleted(task) {
   return Boolean(task.completedAt);
 }
 
-function completeTask(taskId) {
-  const completedAt = new Date().toISOString();
-
-  state.tasks = state.tasks.map((task) =>
-    task.id === taskId
-      ? {
-          ...task,
-          completedAt,
-          snoozedUntil: undefined,
-        }
-      : task,
-  );
-
-  saveTasks(state.tasks);
-  render();
-}
-
-function snoozeTask(taskId) {
-  const snoozedUntil = getNextMorningDelivery(new Date(), 1).toISOString();
-
-  state.tasks = state.tasks.map((task) =>
-    task.id === taskId
-      ? {
-          ...task,
-          snoozedUntil,
-        }
-      : task,
-  );
-
-  saveTasks(state.tasks);
-  render();
-}
-
 function formatKoreanDate(date) {
   return new Intl.DateTimeFormat("ko-KR", {
     month: "long",
@@ -765,8 +846,8 @@ function formatRelativeCreatedAt(createdAt) {
   }
 
   return new Intl.DateTimeFormat("ko-KR", {
-    month: "numeric",
     day: "numeric",
+    month: "numeric",
   }).format(created);
 }
 
@@ -777,23 +858,7 @@ function formatSnoozedUntil(snoozedUntil) {
 
 function formatCompletedAt(completedAt) {
   const relative = formatRelativeCreatedAt(completedAt);
-  if (relative === "방금") {
-    return relative;
-  }
-
-  return `${relative}에`;
-}
-
-function normalizeWhitespace(text) {
-  return text.replace(/\s+/g, " ").trim();
-}
-
-function createTaskId() {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID();
-  }
-
-  return `task-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+  return relative === "방금" ? relative : `${relative}`;
 }
 
 function resolveSessionDisplayName(session) {
@@ -804,7 +869,7 @@ function resolveSessionDisplayName(session) {
         ? session.nickname.trim()
         : "";
 
-  if (explicitDisplayName && explicitDisplayName !== "\uce74\uce74\uc624 \uc0ac\uc6a9\uc790") {
+  if (explicitDisplayName && explicitDisplayName !== "카카오 사용자") {
     return explicitDisplayName;
   }
 
@@ -812,8 +877,8 @@ function resolveSessionDisplayName(session) {
     typeof session?.userId === "string" ? session.userId.trim() : String(session?.userId || "").trim();
 
   if (!normalizedUserId) {
-    return "\uce74\uce74\uc624 \uc0ac\uc6a9\uc790";
+    return "카카오 사용자";
   }
 
-  return `\uce74\uce74\uc624 \uacc4\uc815 #${normalizedUserId.slice(-6)}`;
+  return `카카오 계정 #${normalizedUserId.slice(-6)}`;
 }
