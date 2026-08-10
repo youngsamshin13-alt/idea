@@ -22,7 +22,7 @@ export default {
       return createTextResponse(
         request,
         500,
-        "濡쒓렇??泥섎━ 以?臾몄젣媛 ?앷꼈?댁슂. ?좎떆 ???ㅼ떆 ?쒕룄??二쇱꽭??",
+        "로그인 처리 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요.",
       );
     }
   },
@@ -53,7 +53,7 @@ async function handleRequest(request, env) {
   }
 
   if (request.method !== "GET" && request.method !== "HEAD") {
-    return createTextResponse(request, 405, "?덉슜?섏? ?딆? ?붿껌?낅땲??", {
+    return createTextResponse(request, 405, "허용되지 않은 요청입니다.", {
       Allow: "GET, HEAD",
     });
   }
@@ -73,7 +73,7 @@ async function handleRequest(request, env) {
 
   const publicFile = ASSETS[pathname];
   if (!publicFile) {
-    return createTextResponse(request, 404, "?섏씠吏瑜?李얠쓣 ???놁뼱??");
+    return createTextResponse(request, 404, "페이지를 찾을 수 없어요.");
   }
 
   if (publicFile.protected && !(await getSession(request, env))) {
@@ -227,7 +227,7 @@ async function retrieveKakaoUser(accessToken) {
 
 async function logout(request, env) {
   if (!isSameOriginRequest(request)) {
-    return createTextResponse(request, 403, "濡쒓렇?꾩썐 ?붿껌???뺤씤?????놁뼱??");
+    return createTextResponse(request, 403, "로그아웃 요청을 확인할 수 없어요.");
   }
 
   const session = await getSession(request, env);
@@ -259,7 +259,7 @@ async function logout(request, env) {
 async function sendSessionScript(request, env) {
   const session = await getSession(request, env);
   if (!session) {
-    return createTextResponse(request, 401, "濡쒓렇?몄씠 ?꾩슂?⑸땲??");
+    return createTextResponse(request, 401, "로그인이 필요합니다.");
   }
 
   const publicSession = JSON.stringify({
@@ -426,7 +426,7 @@ async function readJsonResponse(response) {
 
 function getKakaoNickname(user) {
   const nickname = user.properties?.nickname || user.kakao_account?.profile?.nickname;
-  return typeof nickname === "string" && nickname.trim() ? nickname.trim().slice(0, 40) : "移댁뭅???ъ슜??";
+  return typeof nickname === "string" && nickname.trim() ? nickname.trim().slice(0, 40) : "카카오 사용자";
 }
 
 function isSecureRequest(request) {
