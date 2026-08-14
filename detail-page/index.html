@@ -350,15 +350,26 @@
   }
   footer b{color:var(--cream);font-weight:700;}
 
-  /* ---------- photo slots ---------- */
+  /* ---------- photo slots ----------
+     사진 파일이 있으면 <img>가 뜨고, 없으면 점선 안내로 자동 전환됩니다.
+     파일을 지정된 경로에 저장하기만 하면 별도 수정 없이 붙습니다. */
+  .shot{margin:30px 0 0;}
+  .shot img{
+    display:block;width:100%;height:auto;
+    border:1px solid var(--line);
+  }
+  .hero .shot img{border-color:rgba(251,244,236,.4);}
+  .shot .slot{display:none;}
+  .shot.empty img{display:none;}
+  .shot.empty .slot{display:flex;}
   .slot{
     border:2px dashed var(--gold);
     background:var(--cream);
     color:var(--ink-2);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    flex-direction:column;align-items:center;justify-content:center;gap:6px;
     text-align:center;
     padding:28px 20px;
-    margin-top:30px;
+    min-height:var(--h,260px);
   }
   .slot b{font-size:14px;font-weight:800;color:var(--ink);}
   .slot span{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;}
@@ -369,7 +380,7 @@
   }
   .hero .slot b{color:var(--white);}
   .hero .slot span{color:rgba(251,244,236,.6);}
-  body.no-slots .slot{display:none;}
+  body.no-slots .shot.empty{display:none;}
 
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important;}
@@ -407,10 +418,13 @@
       <li>연육 75.57%</li>
       <li>딱새우분말 · 꽃게가루 국산</li>
     </ul>
-    <div class="slot" style="min-height:300px;">
-      <b>대표 컷 — 봉지 정면 + 칩을 쏟아 놓은 연출</b>
-      <span>860 × 640px 권장 · 크림/화이트 배경</span>
-    </div>
+    <figure class="shot" style="--h:300px;">
+      <img src="assets/03_대표이미지/딱새우꾸어칩_정면.png" alt="딱새우 꾸어칩 봉지 정면">
+      <div class="slot">
+        <b>대표 컷 — 봉지 정면 + 칩을 쏟아 놓은 연출</b>
+        <span>assets/03_대표이미지/딱새우꾸어칩_정면.png · 860 × 640px 권장</span>
+      </div>
+    </figure>
   </div>
 
   <div class="cut"><span>✂ Cut 01</span></div>
@@ -445,10 +459,13 @@
       <p>이 제품은 그 딱새우를 갈아 만든 <b>딱새우분말(국산)</b>에 <b>꽃게가루(국산)</b>를 더한 복합조미식품으로 맛을 냈습니다. 새우 향을 흉내 낸 향료가 아니라, 실제 딱새우와 꽃게에서 온 맛이라는 점이 이 칩의 출발점입니다.</p>
       <div class="note">칩의 몸통은 실꼬리돔 연육(베트남산)입니다. 딱새우와 꽃게는 조미 원료로 들어가며, 원재료명과 함량은 아래 제품 정보에서 그대로 확인하실 수 있습니다.</div>
     </div>
-    <div class="slot" style="min-height:280px;">
-      <b>원물 컷 — 딱새우 실물 또는 제주 바다</b>
-      <span>860 × 560px 권장</span>
-    </div>
+    <figure class="shot" style="--h:280px;">
+      <img src="assets/04_상세컷/딱새우_원물.jpg" alt="딱새우 실물">
+      <div class="slot">
+        <b>원물 컷 — 딱새우 실물 또는 제주 바다</b>
+        <span>assets/04_상세컷/딱새우_원물.jpg · 860 × 560px 권장</span>
+      </div>
+    </figure>
   </section>
 
   <div class="cut"><span>✂ Cut 03</span></div>
@@ -504,10 +521,13 @@
         <p>160℃에서 1~2분만 데우면 바삭함이 살아납니다. 타기 쉬우니 짧게만 돌려주세요.</p>
       </div>
     </div>
-    <div class="slot" style="min-height:300px;">
-      <b>연출 컷 — 맥주 + 칩 테이블 세팅</b>
-      <span>860 × 600px 권장</span>
-    </div>
+    <figure class="shot" style="--h:300px;">
+      <img src="assets/04_상세컷/맥주안주_연출.jpg" alt="맥주와 함께 놓인 딱새우 꾸어칩">
+      <div class="slot">
+        <b>연출 컷 — 맥주 + 칩 테이블 세팅</b>
+        <span>assets/04_상세컷/맥주안주_연출.jpg · 860 × 600px 권장</span>
+      </div>
+    </figure>
   </section>
 
   <div class="cut"><span>✂ Cut 05</span></div>
@@ -574,10 +594,13 @@
         </tbody>
       </table>
     </div>
-    <div class="slot" style="min-height:260px;">
-      <b>표시사항 컷 — 봉지 뒷면 라벨 실사</b>
-      <span>860 × 520px 권장 · 글자가 읽히도록 선명하게</span>
-    </div>
+    <figure class="shot" style="--h:260px;">
+      <img src="assets/04_상세컷/뒷면라벨.png" alt="딱새우 꾸어칩 봉지 뒷면 표시사항">
+      <div class="slot">
+        <b>표시사항 컷 — 봉지 뒷면 라벨 실사</b>
+        <span>assets/04_상세컷/뒷면라벨.png · 글자가 읽히도록 선명하게</span>
+      </div>
+    </figure>
   </section>
 
   <div class="cut"><span>✂ Cut 07</span></div>
@@ -677,6 +700,17 @@
 
     b860.addEventListener('click', function () { setWidth(860, b860, b780); });
     b780.addEventListener('click', function () { setWidth(780, b780, b860); });
+
+    // 사진 파일이 실제로 있는 슬롯만 이미지를 보여주고,
+    // 없는 슬롯은 점선 안내로 되돌린다.
+    document.querySelectorAll('.shot').forEach(function (shot) {
+      var img = shot.querySelector('img');
+      if (!img) { return; }
+      shot.classList.add('empty');
+      function found() { shot.classList.remove('empty'); }
+      img.addEventListener('load', found);
+      if (img.complete && img.naturalWidth > 0) { found(); }
+    });
 
     bSlots.addEventListener('click', function () {
       var on = bSlots.getAttribute('aria-pressed') === 'true';
