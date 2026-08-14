@@ -3,3 +3,7 @@
 dist/
 node_modules/
 *.log
+
+# 상세페이지 작업물 (대용량 원본/내보내기)
+detail-page/export/*.jpg
+detail-page/export/*.png
