@@ -1,0 +1,685 @@
+<title>딱새우 꾸어칩 상세페이지</title>
+<style>
+  :root{
+    --red:#E12B20;
+    --red-deep:#A81811;
+    --yellow:#FFC72C;
+    --cream:#FBF4EC;
+    --cream-2:#F3E7D8;
+    --gold:#D89A4E;
+    --ink:#1F1A18;
+    --ink-2:#5A4E49;
+    --ink-3:#8C7E77;
+    --line:#E2D3C2;
+    --white:#FFFFFF;
+    --bench:#EDE4DA;
+
+    --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+
+    --col:860px;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:var(--bench);
+    color:var(--ink);
+    font-family:var(--font);
+    font-size:16px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;
+  }
+
+  /* ---------- workbench toolbar (screen only, not part of the deliverable) ---------- */
+  .bar{
+    position:sticky;top:0;z-index:50;
+    background:var(--ink);
+    color:var(--cream);
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+    padding:10px 16px;
+    font-size:13px;
+  }
+  .bar strong{font-weight:700;letter-spacing:-.01em;}
+  .bar .sp{flex:1 1 auto;}
+  .bar button{
+    font-family:inherit;font-size:13px;font-weight:600;
+    color:var(--cream);
+    background:transparent;
+    border:1px solid rgba(251,244,236,.35);
+    border-radius:999px;
+    padding:5px 14px;
+    cursor:pointer;
+    transition:background .15s ease,border-color .15s ease;
+  }
+  .bar button:hover{background:rgba(251,244,236,.12);}
+  .bar button[aria-pressed="true"]{
+    background:var(--yellow);border-color:var(--yellow);color:var(--ink);
+  }
+  .bar button:focus-visible{outline:2px solid var(--yellow);outline-offset:2px;}
+  .bar .hint{color:rgba(251,244,236,.6);font-size:12px;}
+
+  /* ---------- the capture column ---------- */
+  .page{
+    width:var(--col);
+    max-width:100%;
+    margin:0 auto;
+    background:var(--white);
+  }
+
+  section{padding:56px 48px;}
+
+  /* ---------- cut-mark divider: the pouch's own die-cut edge, reused as a slice guide ---------- */
+  .cut{
+    position:relative;
+    height:34px;
+    background:var(--white);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cut::before{
+    content:"";
+    position:absolute;left:0;right:0;top:50%;
+    height:2px;
+    background:repeating-linear-gradient(to right,var(--red) 0 10px,transparent 10px 18px);
+    opacity:.5;
+  }
+  .cut span{
+    position:relative;
+    background:var(--white);
+    padding:0 12px;
+    font-size:10px;font-weight:700;
+    letter-spacing:.22em;
+    color:var(--red);
+    text-transform:uppercase;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:var(--red);
+    color:var(--cream);
+    padding:64px 48px 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;inset:auto 0 0 0;height:14px;
+    background:repeating-linear-gradient(to right,var(--cream) 0 14px,transparent 14px 26px);
+  }
+  .eyebrow{
+    font-size:11px;font-weight:800;letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin:0 0 18px;
+  }
+  h1{
+    margin:0;
+    font-size:66px;
+    line-height:1.02;
+    font-weight:900;
+    letter-spacing:-.045em;
+    text-wrap:balance;
+  }
+  h1 .pop{
+    display:block;
+    color:var(--white);
+    -webkit-text-stroke:2px var(--ink);
+    text-shadow:5px 5px 0 var(--red-deep);
+  }
+  .hero p.lede{
+    margin:26px 0 0;
+    max-width:30em;
+    font-size:17px;
+    line-height:1.75;
+    color:rgba(251,244,236,.92);
+  }
+  .chips{
+    display:flex;flex-wrap:wrap;gap:8px;
+    margin:30px 0 0;padding:0;list-style:none;
+  }
+  .chips li{
+    background:rgba(31,26,24,.28);
+    border:1px solid rgba(251,244,236,.3);
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:13px;font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- headings ---------- */
+  .kicker{
+    font-size:11px;font-weight:800;letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin:0 0 14px;
+  }
+  h2{
+    margin:0 0 14px;
+    font-size:34px;line-height:1.25;
+    font-weight:800;letter-spacing:-.035em;
+    text-wrap:balance;
+  }
+  h3{
+    margin:0 0 8px;
+    font-size:19px;line-height:1.4;
+    font-weight:800;letter-spacing:-.02em;
+  }
+  .sub{
+    margin:0;
+    color:var(--ink-2);
+    font-size:16px;
+    max-width:34em;
+  }
+
+  /* ---------- spec strip ---------- */
+  .strip{
+    background:var(--cream);
+    padding:40px 48px;
+  }
+  .strip .grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .strip .cell{
+    background:var(--cream);
+    padding:24px 20px;
+    text-align:center;
+  }
+  .strip .num{
+    display:block;
+    font-size:32px;font-weight:900;letter-spacing:-.04em;
+    color:var(--red-deep);
+    font-variant-numeric:tabular-nums;
+    line-height:1.1;
+  }
+  .strip .lbl{
+    display:block;margin-top:8px;
+    font-size:13px;font-weight:600;color:var(--ink-2);
+  }
+
+  /* ---------- story ---------- */
+  .story{background:var(--white);}
+  .story .body{margin-top:24px;display:flex;flex-direction:column;gap:16px;}
+  .story p{margin:0;color:var(--ink-2);line-height:1.85;}
+  .story .note{
+    border-left:3px solid var(--gold);
+    padding:14px 18px;
+    background:var(--cream);
+    font-size:14px;
+    color:var(--ink-2);
+  }
+
+  /* ---------- process: a real 3-step sequence, so it is numbered ---------- */
+  .process{background:var(--cream);}
+  .steps{
+    margin:32px 0 0;padding:0;list-style:none;
+    display:flex;flex-direction:column;gap:14px;
+    counter-reset:step;
+  }
+  .steps li{
+    counter-increment:step;
+    display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:start;
+    background:var(--white);
+    border:1px solid var(--line);
+    padding:24px;
+  }
+  .steps li::before{
+    content:counter(step,decimal-leading-zero);
+    font-size:26px;font-weight:900;
+    color:var(--red);
+    letter-spacing:-.04em;
+    font-variant-numeric:tabular-nums;
+    line-height:1.2;
+  }
+  .steps p{margin:0;color:var(--ink-2);font-size:15px;}
+
+  /* ---------- serving ---------- */
+  .serve{background:var(--white);}
+  .serve .grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+    margin-top:30px;
+  }
+  .serve .card{
+    background:var(--cream);
+    border:1px solid var(--line);
+    padding:22px;
+  }
+  .serve .tag{
+    display:inline-block;
+    font-size:11px;font-weight:800;letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:10px;
+  }
+  .serve p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.7;}
+
+  /* ---------- tables ---------- */
+  .tablewrap{overflow-x:auto;margin-top:26px;}
+  table{
+    width:100%;border-collapse:collapse;
+    font-size:14px;
+    background:var(--white);
+  }
+  caption{
+    text-align:left;
+    font-size:13px;color:var(--ink-3);
+    padding-bottom:10px;
+  }
+  th,td{
+    border:1px solid var(--line);
+    padding:12px 14px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    background:var(--cream-2);
+    font-weight:700;
+    white-space:nowrap;
+    color:var(--ink);
+  }
+  td.n{
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .nutri{background:var(--cream);}
+  .nutri .head{
+    background:var(--ink);color:var(--cream);
+    padding:16px 20px;margin-top:26px;
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    flex-wrap:wrap;
+  }
+  .nutri .head b{font-size:17px;font-weight:800;}
+  .nutri .head span{font-size:14px;font-variant-numeric:tabular-nums;}
+  .nutri .tablewrap{margin-top:0;}
+  .nutri table{background:var(--white);}
+  .nutri tfoot td{
+    background:var(--cream-2);
+    font-size:12px;color:var(--ink-2);
+    line-height:1.6;
+  }
+
+  .info{background:var(--white);}
+  .info th{width:150px;}
+
+  /* ---------- allergy / caution ---------- */
+  .caution{background:var(--red-deep);color:var(--cream);}
+  .caution .kicker{color:var(--yellow);}
+  .caution h2{color:var(--white);}
+  .caution .sub{color:rgba(251,244,236,.85);}
+  .allergen{
+    display:flex;flex-wrap:wrap;gap:10px;
+    margin:26px 0 0;padding:0;list-style:none;
+  }
+  .allergen li{
+    background:var(--yellow);color:var(--ink);
+    font-weight:800;font-size:15px;
+    padding:8px 18px;border-radius:999px;
+  }
+  .caution ul.warn{
+    margin:26px 0 0;padding:0;list-style:none;
+    display:flex;flex-direction:column;gap:10px;
+    font-size:14px;
+    color:rgba(251,244,236,.9);
+  }
+  .caution ul.warn li{
+    padding-left:18px;position:relative;line-height:1.7;
+  }
+  .caution ul.warn li::before{
+    content:"";position:absolute;left:0;top:.65em;
+    width:6px;height:6px;background:var(--yellow);border-radius:50%;
+  }
+
+  /* ---------- delivery ---------- */
+  .ship{background:var(--cream);}
+  .ship .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;}
+  .ship .card{background:var(--white);border:1px solid var(--line);padding:22px;}
+  .ship ul{margin:10px 0 0;padding-left:18px;font-size:14px;color:var(--ink-2);line-height:1.8;}
+
+  /* ---------- notice ---------- */
+  .notice{background:var(--white);padding-bottom:64px;}
+  .notice table{font-size:13px;}
+  .notice th{width:210px;}
+
+  footer{
+    background:var(--ink);color:rgba(251,244,236,.7);
+    padding:30px 48px;font-size:12px;line-height:1.8;
+  }
+  footer b{color:var(--cream);font-weight:700;}
+
+  /* ---------- photo slots ---------- */
+  .slot{
+    border:2px dashed var(--gold);
+    background:var(--cream);
+    color:var(--ink-2);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    text-align:center;
+    padding:28px 20px;
+    margin-top:30px;
+  }
+  .slot b{font-size:14px;font-weight:800;color:var(--ink);}
+  .slot span{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;}
+  .hero .slot{
+    border-color:rgba(251,244,236,.55);
+    background:rgba(31,26,24,.2);
+    color:rgba(251,244,236,.85);
+  }
+  .hero .slot b{color:var(--white);}
+  .hero .slot span{color:rgba(251,244,236,.6);}
+  body.no-slots .slot{display:none;}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important;}
+  }
+
+  @media (max-width:900px){
+    :root{--col:100%;}
+    section,.hero,.strip,.notice{padding-left:24px;padding-right:24px;}
+    footer{padding-left:24px;padding-right:24px;}
+    h1{font-size:44px;}
+    h2{font-size:27px;}
+    .strip .grid,.serve .grid,.ship .grid{grid-template-columns:1fr;}
+  }
+</style>
+
+<div class="bar">
+  <strong>딱새우 꾸어칩 상세페이지</strong>
+  <span class="hint">폭 전환 후 각 CUT 선에서 잘라 이미지로 저장하세요</span>
+  <span class="sp"></span>
+  <button type="button" id="w860" aria-pressed="true">네이버 860px</button>
+  <button type="button" id="w780" aria-pressed="false">쿠팡 780px</button>
+  <button type="button" id="slots" aria-pressed="true">사진 자리 표시</button>
+</div>
+
+<div class="page">
+
+  <!-- 1. HERO -->
+  <div class="hero">
+    <p class="eyebrow">Jeju Shrimp Snack</p>
+    <h1>제주에서 온 딱새우<span class="pop">꾸어칩</span></h1>
+    <p class="lede">생선연육 75.57%를 얇게 펴서 유탕 처리한 어육칩에, 딱새우분말이 절반을 차지하는 복합조미식품으로 맛을 냈습니다. 봉지를 열면 나는 고소한 향, 한 입에 부서지는 가벼운 식감. 맥주 안주로도, 아이 간식으로도 부담 없는 50g 한 봉입니다.</p>
+    <ul class="chips">
+      <li>내용량 50g</li>
+      <li>총 247kcal</li>
+      <li>생선연육 75.57%</li>
+      <li>소비기한 제조일로부터 1년</li>
+    </ul>
+    <div class="slot" style="min-height:300px;">
+      <b>대표 컷 — 봉지 정면 + 칩을 쏟아 놓은 연출</b>
+      <span>860 × 640px 권장 · 크림/화이트 배경</span>
+    </div>
+  </div>
+
+  <div class="cut"><span>✂ Cut 01</span></div>
+
+  <!-- 2. SPEC STRIP -->
+  <div class="strip">
+    <div class="grid">
+      <div class="cell">
+        <span class="num">75.57%</span>
+        <span class="lbl">생선연육 함량</span>
+      </div>
+      <div class="cell">
+        <span class="num">50%</span>
+        <span class="lbl">복합조미식품 속 딱새우분말</span>
+      </div>
+      <div class="cell">
+        <span class="num">50g</span>
+        <span class="lbl">한 봉지 · 총 247kcal</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cut"><span>✂ Cut 02</span></div>
+
+  <!-- 3. STORY -->
+  <section class="story">
+    <p class="kicker">About 딱새우</p>
+    <h2>제주 사람들이 ‘딱새우’라 부르는 그 새우</h2>
+    <p class="sub">이름은 새우지만, 표준명은 가시발새우. 집게다리의 붉은 줄무늬가 선명한 가재류입니다.</p>
+    <div class="body">
+      <p>제주·부산·경남·전남 앞바다에서 잡히며, 껍질이 단단하고 살이 단단하게 여물어 회로도 먹고 라면 육수로도 씁니다. 제주 식당에서 “딱새우”라고 부르는 바로 그 재료예요.</p>
+      <p>이 제품은 그 딱새우를 갈아 만든 <b>딱새우분말(국내산)</b>을 복합조미식품의 절반으로 넣어 맛을 냈습니다. 새우 향을 흉내 낸 향료가 아니라, 실제 딱새우에서 온 맛이라는 점이 이 칩의 출발점입니다.</p>
+      <div class="note">칩의 몸통은 생선연육(베트남산)입니다. 딱새우는 조미 원료로 들어가며, 원재료명과 함량은 아래 제품 정보에서 그대로 확인하실 수 있습니다.</div>
+    </div>
+    <div class="slot" style="min-height:280px;">
+      <b>원물 컷 — 딱새우 실물 또는 제주 바다</b>
+      <span>860 × 560px 권장</span>
+    </div>
+  </section>
+
+  <div class="cut"><span>✂ Cut 03</span></div>
+
+  <!-- 4. PROCESS (real sequence → numbered) -->
+  <section class="process">
+    <p class="kicker">How it’s made</p>
+    <h2>세 단계를 거쳐 한 장의 칩이 됩니다</h2>
+    <p class="sub">원단 → 조미 → 유탕. 순서가 곧 식감과 맛을 만듭니다.</p>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>생선연육으로 얇은 원단을 만듭니다</h3>
+          <p>생선연육 75.57%에 옥수수전분을 더해 반죽하고, 얇게 펴서 말린 원단이 칩의 몸통이 됩니다. 두께가 얇을수록 튀겼을 때 더 가볍게 부서집니다.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>딱새우분말로 맛을 입힙니다</h3>
+          <p>복합조미식품 11%를 배합하고, 그 절반을 국내산 딱새우분말이 차지합니다. 여기에 정제소금·설탕·향신료가 더해져 고소하고 짭조름한 맛이 완성됩니다.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>유탕 처리해 바삭하게 마무리합니다</h3>
+          <p>기름에 튀겨 부풀린 유탕처리제품입니다. 표면이 오글오글 접히면서 씹는 순간 ‘바삭’ 하고 부서지는 식감이 만들어집니다.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <div class="cut"><span>✂ Cut 04</span></div>
+
+  <!-- 5. SERVING -->
+  <section class="serve">
+    <p class="kicker">How to enjoy</p>
+    <h2>이렇게 즐겨보세요</h2>
+    <p class="sub">따로 조리하지 않아도 되는 간식이지만, 조금만 손대면 더 좋아집니다.</p>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">그대로</span>
+        <h3>봉지째 바로</h3>
+        <p>개봉 즉시가 가장 바삭합니다. 50g 한 봉이 둘이서 나눠 먹기 딱 좋은 양이에요.</p>
+      </div>
+      <div class="card">
+        <span class="tag">맥주 안주</span>
+        <h3>시원한 맥주와</h3>
+        <p>짭조름한 새우 맛이 라거와 잘 어울립니다. 손에 기름이 적게 묻어 안주로 편합니다.</p>
+      </div>
+      <div class="card">
+        <span class="tag">에어프라이어</span>
+        <h3>눅눅해졌다면</h3>
+        <p>160℃에서 1~2분만 데우면 바삭함이 살아납니다. 타기 쉬우니 짧게만 돌려주세요.</p>
+      </div>
+    </div>
+    <div class="slot" style="min-height:300px;">
+      <b>연출 컷 — 맥주 + 칩 테이블 세팅</b>
+      <span>860 × 600px 권장</span>
+    </div>
+  </section>
+
+  <div class="cut"><span>✂ Cut 05</span></div>
+
+  <!-- 6. NUTRITION -->
+  <section class="nutri">
+    <p class="kicker">Nutrition</p>
+    <h2>영양정보</h2>
+    <p class="sub">포장에 표시된 값을 그대로 옮겼습니다.</p>
+    <div class="head">
+      <b>총 내용량 50g</b>
+      <span>247kcal</span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <caption>총 내용량당 함량 및 1일 영양성분 기준치에 대한 비율</caption>
+        <thead>
+          <tr>
+            <th scope="col">영양성분</th>
+            <th scope="col" style="text-align:right;">함량</th>
+            <th scope="col" style="text-align:right;">1일 기준치 대비</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">나트륨</th><td class="n">400mg</td><td class="n">20%</td></tr>
+          <tr><th scope="row">탄수화물</th><td class="n">27g</td><td class="n">8%</td></tr>
+          <tr><th scope="row">당류</th><td class="n">18g</td><td class="n">18%</td></tr>
+          <tr><th scope="row">지방</th><td class="n">12g</td><td class="n">22%</td></tr>
+          <tr><th scope="row">트랜스지방</th><td class="n">0g</td><td class="n">—</td></tr>
+          <tr><th scope="row">포화지방</th><td class="n">2g</td><td class="n">13%</td></tr>
+          <tr><th scope="row">콜레스테롤</th><td class="n">18mg</td><td class="n">6%</td></tr>
+          <tr><th scope="row">단백질</th><td class="n">8g</td><td class="n">15%</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3">1일 영양성분 기준치에 대한 비율(%)은 2,000kcal 기준이므로 개인의 필요 열량에 따라 다를 수 있습니다.</td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <div class="cut"><span>✂ Cut 06</span></div>
+
+  <!-- 7. PRODUCT INFO -->
+  <section class="info">
+    <p class="kicker">Product</p>
+    <h2>제품 정보</h2>
+    <p class="sub">포장 뒷면 표시사항과 동일합니다.</p>
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><th scope="row">제품명</th><td>딱새우 꾸어칩</td></tr>
+          <tr><th scope="row">식품유형</th><td>기타어육가공품 (유탕처리제품 / 비살균제품)</td></tr>
+          <tr><th scope="row">내용량</th><td>50g (247kcal)</td></tr>
+          <tr><th scope="row">원재료명 및 함량</th><td>기타어육가공품 딱새우꾸어칩(원단) 100% [생선연육 약 75.57%(베트남산), 복합조미식품 11%(딱새우분말 50%(국내산), 옥수수전분), 옥수수전분(국내산), 정제소금, 설탕, 폴리인산나트륨, 향신료 등]</td></tr>
+          <tr><th scope="row">알레르기 표시</th><td>새우, 밀, 대두, 게 함유</td></tr>
+          <tr><th scope="row">소비기한</th><td>제조일로부터 1년 (개별 표기)</td></tr>
+          <tr><th scope="row">보관방법</th><td>직사광선을 피하고 서늘한 곳에 보관하세요.</td></tr>
+          <tr><th scope="row">포장재질</th><td>폴리에틸렌(내면)</td></tr>
+          <tr><th scope="row">품목보고번호</th><td>19850144063151</td></tr>
+          <tr><th scope="row">제조원</th><td>(주)명성리프레시 · 부산시 사하구</td></tr>
+          <tr><th scope="row">유통전문판매원</th><td>(주)아트스토리 · 제주시 청사로 11, 1층</td></tr>
+          <tr><th scope="row">소비자상담실</th><td>051-261-5784</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slot" style="min-height:260px;">
+      <b>표시사항 컷 — 봉지 뒷면 라벨 실사</b>
+      <span>860 × 520px 권장 · 글자가 읽히도록 선명하게</span>
+    </div>
+  </section>
+
+  <div class="cut"><span>✂ Cut 07</span></div>
+
+  <!-- 8. ALLERGY / CAUTION -->
+  <section class="caution">
+    <p class="kicker">Caution</p>
+    <h2>드시기 전 꼭 확인해주세요</h2>
+    <p class="sub">아래 원재료에 알레르기가 있으신 분은 섭취를 피해주세요.</p>
+    <ul class="allergen">
+      <li>새우</li>
+      <li>밀</li>
+      <li>대두</li>
+      <li>게</li>
+    </ul>
+    <ul class="warn">
+      <li>이 제품은 메밀, 우유, 땅콩, 호두, 오징어, 조개류(굴, 전복, 홍합 포함) 등을 사용한 제품과 같은 제조시설에서 제조하고 있습니다.</li>
+      <li>부정·불량식품 신고는 국번 없이 1399로 연락해주세요.</li>
+      <li>제품에 이상이 있을 경우 구입처 및 제조원에서 교환 또는 환불해 드립니다.</li>
+      <li>개봉 후에는 밀봉해 보관하고 가급적 빠르게 드시는 것을 권합니다.</li>
+    </ul>
+  </section>
+
+  <div class="cut"><span>✂ Cut 08</span></div>
+
+  <!-- 9. DELIVERY -->
+  <section class="ship">
+    <p class="kicker">Delivery</p>
+    <h2>배송 · 교환 · 반품 안내</h2>
+    <p class="sub">판매 채널 정책에 맞춰 아래 내용을 수정해 사용하세요.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>배송</h3>
+        <ul>
+          <li>평일 오후 2시 이전 결제 건 당일 출고</li>
+          <li>주말·공휴일 주문은 다음 영업일 출고</li>
+          <li>제주 및 도서산간 지역은 추가 배송비 발생</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>교환 · 반품</h3>
+        <ul>
+          <li>상품 수령 후 7일 이내 신청 가능</li>
+          <li>식품 특성상 단순 변심에 의한 개봉 상품은 교환·반품 불가</li>
+          <li>파손·오배송 등 판매자 귀책 시 왕복 배송비 판매자 부담</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="cut"><span>✂ Cut 09</span></div>
+
+  <!-- 10. LEGAL NOTICE -->
+  <section class="notice">
+    <p class="kicker">Legal</p>
+    <h2>상품정보제공고시 · 가공식품</h2>
+    <p class="sub">전자상거래 등에서의 상품 등의 정보제공에 관한 고시에 따른 필수 표기 항목입니다.</p>
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><th scope="row">제품명</th><td>딱새우 꾸어칩</td></tr>
+          <tr><th scope="row">식품의 유형</th><td>기타어육가공품 (유탕처리제품 / 비살균제품)</td></tr>
+          <tr><th scope="row">생산자 및 소재지</th><td>제조원 (주)명성리프레시 · 부산시 사하구 / 유통전문판매원 (주)아트스토리 · 제주시 청사로 11, 1층</td></tr>
+          <tr><th scope="row">제조연월일, 소비기한 또는 품질유지기한</th><td>제품 별도 표기 (소비기한: 제조일로부터 1년)</td></tr>
+          <tr><th scope="row">포장단위별 내용물의 용량(중량), 수량</th><td>50g × 1봉</td></tr>
+          <tr><th scope="row">원재료명 및 함량</th><td>기타어육가공품 딱새우꾸어칩(원단) 100% [생선연육 약 75.57%(베트남산), 복합조미식품 11%(딱새우분말 50%(국내산), 옥수수전분), 옥수수전분(국내산), 정제소금, 설탕, 폴리인산나트륨, 향신료 등] · 새우, 밀, 대두, 게 함유</td></tr>
+          <tr><th scope="row">영양성분</th><td>총 내용량 50g 기준 247kcal · 나트륨 400mg(20%), 탄수화물 27g(8%), 당류 18g(18%), 지방 12g(22%), 트랜스지방 0g, 포화지방 2g(13%), 콜레스테롤 18mg(6%), 단백질 8g(15%)</td></tr>
+          <tr><th scope="row">유전자변형식품에 해당하는 경우의 표시</th><td>해당 없음</td></tr>
+          <tr><th scope="row">수입식품에 해당하는 경우의 문구</th><td>해당 없음 (국내 제조)</td></tr>
+          <tr><th scope="row">소비자안전을 위한 주의사항</th><td>알레르기 유발물질(새우, 밀, 대두, 게)을 함유하고 있습니다. 직사광선을 피하고 서늘한 곳에 보관하세요. 개봉 후에는 빠르게 드시기 바랍니다.</td></tr>
+          <tr><th scope="row">소비자상담 관련 전화번호</th><td>051-261-5784</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <b>딱새우 꾸어칩 50g</b> · 유통전문판매원 (주)아트스토리 · 소비자상담실 051-261-5784<br>
+    본 페이지의 제품 정보는 포장 표시사항을 기준으로 작성되었습니다. 부정·불량식품 신고는 국번 없이 1399.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var b860 = document.getElementById('w860');
+    var b780 = document.getElementById('w780');
+    var bSlots = document.getElementById('slots');
+
+    function setWidth(px, on, off) {
+      root.style.setProperty('--col', px + 'px');
+      on.setAttribute('aria-pressed', 'true');
+      off.setAttribute('aria-pressed', 'false');
+    }
+
+    b860.addEventListener('click', function () { setWidth(860, b860, b780); });
+    b780.addEventListener('click', function () { setWidth(780, b780, b860); });
+
+    bSlots.addEventListener('click', function () {
+      var on = bSlots.getAttribute('aria-pressed') === 'true';
+      bSlots.setAttribute('aria-pressed', on ? 'false' : 'true');
+      document.body.classList.toggle('no-slots', on);
+    });
+  })();
+</script>
