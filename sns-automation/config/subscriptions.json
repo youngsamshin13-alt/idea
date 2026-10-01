@@ -1,0 +1,26 @@
+{
+  "_설명": "월 구독료는 USD 기준 추정치입니다. verified가 false인 항목은 실제 결제 금액을 확인한 뒤 고쳐 주세요.",
+  "usdToKrw": 1400,
+  "items": [
+    { "id": "claude", "name": "Claude Pro", "monthlyUsd": 20, "billing": "monthly", "verified": false,
+      "role": "자동화 지휘: 플레이리스트·운동영상 제작 실행, 인스타·페북 업로드, 이 시스템 운영", "lines": ["music", "workout", "shopping", "blog", "social"] },
+    { "id": "chatgpt", "name": "ChatGPT Pro", "monthlyUsd": 200, "billing": "monthly", "verified": false,
+      "role": "Codex로 새 운동영상 제작, 지원사업 자동 지원", "lines": ["workout", "grant"],
+      "note": "Plus($20)로 충분한지 사용량을 확인하세요. 가장 비싼 항목입니다." },
+    { "id": "gemini", "name": "Gemini 플러스", "monthlyUsd": 8, "billing": "monthly", "verified": false,
+      "role": "음악 프롬프트 생성, 자료 정리", "lines": ["music", "blog"],
+      "overlapsWith": "googleflow" },
+    { "id": "googleflow", "name": "Google AI Pro (Flow)", "monthlyUsd": 20, "billing": "monthly", "verified": false,
+      "role": "구글 Flow로 쇼핑 쇼츠 제작 (Gemini 고급 기능 포함)", "lines": ["shopping"],
+      "overlapsWith": "gemini" },
+    { "id": "abocado", "name": "Abocado AI", "monthlyUsd": 30, "billing": "monthly", "verified": true,
+      "role": "플레이리스트 메이커 (Claude Code 연동)", "lines": ["music"] },
+    { "id": "suno", "name": "Suno Premier", "monthlyUsd": 30, "billing": "monthly", "verified": false,
+      "role": "음악 제작", "lines": ["music"], "overlapsWith": "mureka" },
+    { "id": "mureka", "name": "Mureka Pro (1년)", "monthlyUsd": 25, "billing": "yearly", "verified": false,
+      "role": "음악 제작", "lines": ["music"], "overlapsWith": "suno",
+      "note": "1년 선결제라 중도 해지가 어렵습니다. 겹친다면 Suno 쪽을 줄이는 게 유리할 수 있습니다." },
+    { "id": "higgsfield", "name": "Higgsfield Plus", "monthlyUsd": 39, "billing": "monthly", "verified": false,
+      "role": "운동영상 자동 제작 (Claude Code 연동)", "lines": ["workout"] }
+  ]
+}

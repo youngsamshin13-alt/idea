@@ -1,0 +1,52 @@
+{
+  "_설명": "콘텐츠 라인별 본편 채널과, 본편 하나에서 자동으로 만들어지는 파생 작업입니다. weeklyTarget은 주간 본편 목표 개수입니다.",
+  "lines": {
+    "music": {
+      "name": "음악·힐링 플레이리스트",
+      "goal": "장기 자산 (애드센스)",
+      "weeklyTarget": 2,
+      "skill": "sns-music-playlist",
+      "main": "youtube-music",
+      "derivatives": ["youtube-shorts", "instagram-reels", "facebook", "threads"]
+    },
+    "workout": {
+      "name": "운동 영상",
+      "goal": "신뢰 쌓기 (애드센스, 이후 협찬)",
+      "weeklyTarget": 2,
+      "skill": "sns-workout-video",
+      "main": "youtube-workout",
+      "derivatives": ["youtube-shorts", "instagram-cardnews", "facebook", "threads", "blog"]
+    },
+    "shopping": {
+      "name": "쇼핑 쇼츠 (운동 용품 중심)",
+      "goal": "빠른 현금 (제휴 수수료)",
+      "weeklyTarget": 3,
+      "skill": "sns-shopping-shorts",
+      "main": "youtube-shorts",
+      "derivatives": ["instagram-reels", "facebook", "threads", "blog"]
+    },
+    "blog": {
+      "name": "블로그 단독 글",
+      "goal": "검색 유입 + 제휴 링크",
+      "weeklyTarget": 2,
+      "skill": "sns-blog-post",
+      "main": "blog",
+      "derivatives": ["instagram-cardnews", "threads"]
+    }
+  },
+  "channels": {
+    "youtube-music": { "name": "YouTube 음악 채널", "skill": "sns-music-playlist" },
+    "youtube-workout": { "name": "YouTube 운동 채널", "skill": "sns-workout-video" },
+    "youtube-shorts": { "name": "YouTube 쇼츠", "skill": "sns-social-repost" },
+    "instagram-reels": { "name": "인스타 릴스", "skill": "sns-social-repost" },
+    "instagram-cardnews": { "name": "인스타 카드뉴스", "skill": "sns-social-repost" },
+    "facebook": { "name": "페이스북 (인스타 연계)", "skill": "sns-social-repost" },
+    "threads": { "name": "스레드", "skill": "sns-social-repost" },
+    "blog": { "name": "블로그", "skill": "sns-blog-post" }
+  },
+  "disclosure": {
+    "affiliate": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.",
+    "ad": "[광고]",
+    "ai": "이 콘텐츠는 AI 도구를 활용해 제작되었습니다."
+  }
+}
