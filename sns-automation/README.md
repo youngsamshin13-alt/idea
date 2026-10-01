@@ -48,6 +48,7 @@ node sns.js status                        # 채널별 남은 작업과 실행할
 node sns.js done <id> youtube-workout     # 작업 완료 (채널 생략 시 전체)
 node sns.js income 쿠팡파트너스 32000      # 수익 기록 (원)
 node sns.js cost                          # 구독료 합계·겹치는 구독·손익분기
+node sns.js report                        # 주간 수익 보고 (plans/<주>-report.md)
 ```
 
 Claude Code에서는 `/sns-weekly`로 시작하면 계획 → 남은 작업 → 손익을 정리해서 다음에 할 스킬을 알려 줍니다.

@@ -12,6 +12,7 @@ description: SNS 주제 기획 (PRD 0단계). "주제 기획", "이번 주 뭐 �
 - `node sns.js topic` → 남은 후보. 같은 주제를 다시 제안하지 않는다.
 - `node sns.js topic list all`, `data/contents.json` → 최근 만든 주제와 완료 현황.
 - `data/income.json` → 수익이 난 출처. 수익이 난 라인·상품군에 가산점을 준다.
+- `plans/<지난주>-report.md`가 있으면 "6. 분석 의견"의 다음 주 근거를 반영한다.
 
 ## 2. 근거 수집
 - 이번 주와 다음 주의 계절, 날씨, 기념일, 행사(명절, 시험, 휴가, 블랙프라이데이, 연말 등)를 정리한다.
