@@ -1,9 +1,11 @@
 # SNS 수익화 자동화 시스템
 
+전체 요구사항과 흐름은 [PRD.md](PRD.md)에 있습니다.
+
 본편 콘텐츠 하나를 만들면 쇼츠·인스타·페이스북·스레드·블로그용 파생 작업이 자동으로 생기고, Claude Code 스킬이 각 작업을 처리하는 구조입니다.
 
 ```
-[기획] Gemini ──▶ node sns.js new ──▶ [본편 제작 스킬] ──▶ [재가공 스킬] ──▶ [수익 기록]
+[주제 기획] 월요일 루틴 /sns-topic-plan ──▶ node sns.js topic pick ──▶ [본편 제작 스킬] ──▶ [재가공 스킬] ──▶ [수익 기록]
                      │                  /sns-music-playlist    /sns-social-repost   node sns.js income
                      │                  /sns-workout-video     /sns-blog-post       node sns.js cost
                      │                  /sns-shopping-shorts
@@ -37,6 +39,9 @@
 
 ```bash
 cd sns-automation
+node sns.js topic                         # 주제 후보 보기 (점수순)
+node sns.js topic pick <id>               # 후보 승인 → 본편 등록
+node sns.js topic drop <id>               # 후보 버리기
 node sns.js plan                          # 이번 주 목표·루틴 (plans/에 저장)
 node sns.js new workout "10분 하체 루틴"   # 본편 등록 + 파생 작업 자동 생성
 node sns.js status                        # 채널별 남은 작업과 실행할 스킬
@@ -51,7 +56,8 @@ Claude Code에서는 `/sns-weekly`로 시작하면 계획 → 남은 작업 → 
 
 | 요일 | 할 일 |
 |---|---|
-| 월 | Gemini로 주제·프롬프트 정리, `new`로 본편 등록 |
+| 월 08:44 | 루틴이 주제 후보 생성 (`/sns-topic-plan`) |
+| 월 | 후보 검토 → `topic pick`, Gemini로 음악 프롬프트 정리 |
 | 화 | `/sns-music-playlist` |
 | 수 | `/sns-workout-video` |
 | 목 | `/sns-shopping-shorts` |
