@@ -30,7 +30,7 @@
 | 운동영상팀 | `sns-workout-producer` | 운동 루틴, 영상 생성 또는 Codex 지시서, 메타데이터 | `/sns-workout-video` | Higgsfield MCP, Codex 지시서 |
 | 커머스팀 | `sns-commerce-producer` | 쇼핑 쇼츠 대본, Flow 프롬프트, 제휴 표기 | `/sns-shopping-shorts` | Google Flow 프롬프트, Higgsfield(대안) |
 | 콘텐츠편집팀 | `sns-editor` | 블로그 글, 쇼츠·릴스·카드뉴스·페이스북·스레드 문구 | `/sns-blog-post`, `/sns-social-repost` | Abocado·Higgsfield 이미지 |
-| 수익분석팀 | `sns-analyst` | 주간 진행률, 손익분기, 구독 정리 제안, 다음 주 기획 입력 | `/sns-weekly` | `sns.js plan/status/cost` |
+| 수익분석팀 | `sns-analyst` | 주간 진행률, 손익분기, 구독 정리 제안, 다음 주 기획 입력 | `/sns-weekly` | `sns.js report/plan/status/cost` |
 | 검수팀 | `sns-reviewer` | 광고·AI 표기, 지어낸 내용, 플랫폼 정책, 데이터 정합성 검사 | — | 읽기 전용 |
 
 ## 3. 파일 담당
@@ -98,7 +98,7 @@
 |---|---|---|---|
 | SNS 월요일 주제 기획 | 매주 월 08:44 | 기획팀 → 검수팀 | 운영 중 |
 | 매일 아침 업무 지시 | 매일 09:00 | (수산물 사업, 별개) | 운영 중, 건드리지 않음 |
-| 주간 수익 보고 | 일요일 저녁 제안 | 수익분석팀 | **결정 필요** |
+| SNS 주간 수익 보고 | 매주 일 19:52 | 수익분석팀 | 운영 중 |
 | 매일 재가공 점검 | 매일 제안 | 콘텐츠편집팀 | **결정 필요** (L2가 안정된 뒤) |
 
 ## 8. 총괄 위임 규칙

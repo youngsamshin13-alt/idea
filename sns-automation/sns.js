@@ -260,6 +260,68 @@ function plan() {
   console.log(`\n저장: plans/${week}.md`);
 }
 
+// ── report: 주간 수익 보고 (수치 부분, 분석 의견은 수익분석팀이 덧붙임) ──
+function report() {
+  const week = isoWeek();
+  const month = kstDate().slice(0, 7);
+  const rate = subs.usdToKrw;
+  const monthlyCost = subs.items.reduce((s, i) => s + i.monthlyUsd, 0) * rate;
+  const contents = readJson("data/contents.json");
+  const thisWeek = contents.filter((r) => r.week === week);
+  const income = readJson("data/income.json").filter((r) => r.month === month);
+  const earned = income.reduce((s, r) => s + r.amountKrw, 0);
+  const topics = readJson("data/topics.json").filter((t) => t.week === week);
+  const L = [`# ${week} 주간 수익 보고 (생성: ${kstDate()} KST)`, ""];
+
+  L.push("## 1. 본편 진행", "", "| 라인 | 목표 | 등록 | 완료 | 달성률 |", "|---|---|---|---|---|");
+  let target = 0, made = 0;
+  for (const [key, p] of Object.entries(pipelines.lines)) {
+    const mine = thisWeek.filter((r) => r.line === key);
+    const fin = mine.filter((r) => r.tasks.every((t) => t.status === "done")).length;
+    target += p.weeklyTarget; made += mine.length;
+    L.push(`| ${p.name} | ${p.weeklyTarget} | ${mine.length} | ${fin} | ${Math.round((mine.length / p.weeklyTarget) * 100)}% |`);
+  }
+  L.push("", `전체 등록률 ${target ? Math.round((made / target) * 100) : 0}% (PRD 목표 80% 이상)`);
+
+  const tasks = thisWeek.flatMap((r) => r.tasks);
+  const doneTasks = tasks.filter((t) => t.status === "done").length;
+  L.push("", "## 2. 채널별 파생 작업", "", "| 채널 | 완료 / 전체 |", "|---|---|");
+  const byCh = {};
+  for (const t of tasks) {
+    byCh[t.channel] ||= [0, 0];
+    byCh[t.channel][1]++;
+    if (t.status === "done") byCh[t.channel][0]++;
+  }
+  for (const [ch, [d, n]] of Object.entries(byCh)) L.push(`| ${channelName(ch)} | ${d} / ${n} |`);
+  L.push("", `파생 작업 완료율 ${tasks.length ? Math.round((doneTasks / tasks.length) * 100) : 0}% (PRD 목표 80% 이상)`);
+
+  L.push("", `## 3. ${month} 수익`, "", "| 출처 | 금액 |", "|---|---|");
+  const bySrc = {};
+  for (const r of income) bySrc[r.source] = (bySrc[r.source] || 0) + r.amountKrw;
+  for (const [s, v] of Object.entries(bySrc).sort((a, b) => b[1] - a[1])) L.push(`| ${s} | ${won(v)} |`);
+  L.push(`| **합계** | **${won(earned)}** |`, "",
+    `월 구독료 ${won(monthlyCost)} → ${earned >= monthlyCost ? "흑자 " + won(earned - monthlyCost) : "손익분기까지 " + won(monthlyCost - earned)}`);
+  if (!income.length) L.push("", "이번 달 기록된 수익이 없습니다. `node sns.js income <출처> <금액>`으로 입력해 주세요.");
+
+  L.push("", "## 4. 구독 점검", "");
+  const unverified = subs.items.filter((i) => !i.verified).map((i) => i.name);
+  if (unverified.length) L.push(`- 금액 확인 필요: ${unverified.join(", ")}`);
+  const seen = new Set();
+  for (const i of subs.items.filter((x) => x.overlapsWith && !seen.has(x.id) && seen.add(x.overlapsWith))) {
+    const o = subs.items.find((x) => x.id === i.overlapsWith);
+    L.push(`- 역할 겹침: ${i.name} ↔ ${o.name} (최대 ${won(Math.min(i.monthlyUsd, o.monthlyUsd) * rate)}/월 절약 가능)`);
+  }
+
+  L.push("", "## 5. 주제 후보 처리", "",
+    `이번 주 후보 ${topics.length}개: 승인 ${topics.filter((t) => t.status === "used").length}, 버림 ${topics.filter((t) => t.status === "dropped").length}, 대기 ${topics.filter((t) => t.status === "proposed").length}`);
+  L.push("", "## 6. 분석 의견 (수익분석팀)", "", "<!-- sns-analyst가 채움: 잘된 것, 막힌 것, 다음 주 기획팀에 넘길 근거 3개 이내 -->", "");
+
+  fs.mkdirSync(file("plans"), { recursive: true });
+  fs.writeFileSync(file("plans", `${week}-report.md`), L.join("\n"));
+  console.log(L.join("\n"));
+  console.log(`\n저장: plans/${week}-report.md`);
+}
+
 const [cmd, ...args] = process.argv.slice(2);
 const commands = {
   cost,
@@ -268,6 +330,7 @@ const commands = {
   done: () => done(args[0], args[1] || "all"),
   status,
   plan,
+  report,
   topic: () => topic(...args),
 };
 if (!commands[cmd]) {
@@ -282,7 +345,8 @@ if (!commands[cmd]) {
   node sns.js status                   채널별 남은 작업
   node sns.js done <id> [채널|all]      작업 완료 처리
   node sns.js income <출처> <금액>      수익 기록 (원)
-  node sns.js cost                     구독료·손익분기 점검`);
+  node sns.js cost                     구독료·손익분기 점검
+  node sns.js report                   주간 수익 보고 (plans/<주>-report.md)`);
 } else {
   commands[cmd]();
 }

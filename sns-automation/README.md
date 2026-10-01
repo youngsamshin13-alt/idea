@@ -63,7 +63,7 @@ Claude Code에서는 `/sns-weekly`로 시작하면 계획 → 남은 작업 → 
 | 목 | `/sns-shopping-shorts` |
 | 금 | `/sns-blog-post` |
 | 매일 | `/sns-social-repost` (인스타 → 페북 → 스레드) |
-| 일 | `income`, `cost`로 점검 |
+| 일 | 수익 입력(`income`) → 19:52 루틴이 주간 수익 보고 생성 (`report`) |
 
 ## 안전 규칙 (모든 스킬 공통)
 - 크레딧이 드는 생성은 차감액을 먼저 보여주고 승인을 받은 뒤 실행합니다.
